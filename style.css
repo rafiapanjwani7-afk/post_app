@@ -1,0 +1,689 @@
+/* ==========================
+   GLOBAL
+========================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: background .3s, color .3s, border-color .3s, box-shadow .3s;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    min-height: 100vh;
+    background: var(--body-bg);
+}
+
+/* ==========================
+   VARIABLES
+========================== */
+
+:root{
+
+    --body-bg:#edf2f7;
+
+    --navbar-bg:#1e293b;
+
+    --card-bg:#ffffff;
+
+    --header-bg:#f8fafc;
+
+    --text:#1f2937;
+
+    --primary:#14b8a6;
+
+    --primary-hover:#0f766e;
+
+    --border:#d6d6d6;
+
+}
+
+[data-theme="dark"]{
+
+    --body-bg:#0f172a;
+
+    --navbar-bg:#111827;
+
+    --card-bg:#1e293b;
+
+    --header-bg:#111827;
+
+    --text:#f8fafc;
+
+    --primary:#14b8a6;
+
+    --primary-hover:#0d9488;
+
+    --border:#334155;
+
+}
+
+/* ==========================
+   SCROLLBAR
+========================== */
+
+::-webkit-scrollbar{
+    width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#14b8a6;
+    border-radius:20px;
+}
+
+/* ==========================
+   NAVBAR
+========================== */
+
+.navbar{
+
+    background:var(--navbar-bg);
+
+    padding:15px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.15);
+
+}
+
+.navbar-brand{
+
+    color:white!important;
+
+    font-size:28px;
+
+    font-weight:700;
+
+}
+
+.nav-link{
+
+    color:white!important;
+
+}
+
+/* ==========================
+   LEFT POST FORM
+========================== */
+
+.postcont{
+
+    background:var(--card-bg)!important;
+
+    border-radius:18px;
+
+    padding:22px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+/* ==========================
+   LABEL
+========================== */
+
+.form-label{
+
+    color:var(--text);
+
+    font-weight:600;
+
+}
+
+/* ==========================
+   INPUT
+========================== */
+
+.form-control{
+
+    border-radius:12px;
+
+    border:1px solid var(--border);
+
+    background:transparent;
+
+    color:var(--text)!important;
+
+}
+
+.form-control:focus{
+
+    border-color:var(--primary);
+
+    box-shadow:0 0 0 .25rem rgba(20,184,166,.2);
+
+    background:transparent;
+
+}
+
+/* ==========================
+   IMAGE SELECT
+========================== */
+
+.images img{
+
+    width:52px;
+
+    height:52px;
+
+    border-radius:10px;
+
+    object-fit:cover;
+
+    cursor:pointer;
+
+    border:3px solid transparent;
+
+}
+
+.images img:hover{
+
+    transform:scale(1.08);
+
+}
+
+.addImg{
+
+    border-color:var(--primary)!important;
+
+    box-shadow:0 0 15px rgba(20,184,166,.5);
+
+}
+
+/* ==========================
+   COLOR BOX
+========================== */
+
+.colorbox{
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    border:2px solid transparent;
+
+}
+
+.colorbox:hover{
+
+    transform:scale(1.1);
+
+}
+
+.colorbox.selected{
+
+    border:3px solid white;
+
+    box-shadow:0 0 0 3px var(--primary);
+
+}
+
+/* ==========================
+   BUTTON
+========================== */
+
+.postBtn{
+
+    width:100%;
+
+    border:none;
+
+    padding:12px;
+
+    border-radius:12px;
+
+    color:white;
+
+    background:linear-gradient(135deg,#14b8a6,#0f766e);
+
+    font-size:17px;
+
+    font-weight:600;
+
+}
+
+.postBtn:hover{
+
+    background:linear-gradient(135deg,#2dd4bf,#0d9488);
+
+    transform:translateY(-2px);
+
+}
+
+/* ==========================
+   SEARCH
+========================== */
+
+.search-box{
+
+    position:relative;
+
+}
+
+.search-box input{
+
+    height:50px;
+
+    border-radius:14px;
+
+    padding-right:45px;
+
+}
+
+.search-btn{
+
+    position:absolute;
+
+    top:50%;
+
+    right:10px;
+
+    transform:translateY(-50%);
+
+    width:35px;
+
+    height:35px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:var(--primary);
+
+    color:white;
+
+}
+
+/* ==========================
+   POST CARD
+========================== */
+
+.card{
+
+    border:none;
+
+    overflow:hidden;
+
+    border-radius:18px;
+
+    background:var(--card-bg);
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.35s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:0 20px 40px rgba(0,0,0,.15);
+
+}
+
+.card-header{
+
+    background:var(--header-bg);
+
+    color:var(--text);
+
+    font-weight:600;
+
+    padding:15px 20px;
+
+}
+
+.card-body{
+
+    position:relative;
+
+    min-height:200px;
+
+    background-size:cover;
+
+    background-position:center;
+
+    padding:20px;
+
+    overflow:hidden;
+
+}
+
+/* Overlay */
+
+.card-body::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:rgba(0,0,0,.35);
+
+}
+
+/* Content */
+
+.card-body>*{
+
+    position:relative;
+
+    z-index:2;
+
+}
+
+.card-title{
+
+    color:#fff!important;
+
+    font-size:30px;
+
+    font-weight:700;
+
+}
+
+.card-text{
+
+    color:#f1f5f9!important;
+
+    font-size:17px;
+
+}
+/* --- NAVBAR & HEADER STYLING IMPROVEMENT --- */
+
+/* Target common navbar tags or header container */
+nav, 
+.navbar,
+header,
+div[style*="background-color"][style*="nav"], /* Agar inline wrapper ho */
+.bg-dark.navbar {
+    background-color: #1e293b !important; /* Premium Slate Dark (Sidebar matching) */
+    border-bottom: 1px solid #334155 !important; /* Dynamic sleek separation line */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    padding: 12px 20px !important;
+}
+
+/* Light Mode Active hone par Navbar auto adjustment */
+[data-theme="light"] nav,
+[data-theme="light"] .navbar,
+[data-theme="light"] .bg-dark.navbar {
+    background-color: #ffffff !important; /* Premium Plain White */
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* Light mode mein brand logo text dark black dikhega */
+[data-theme="light"] nav h1,
+[data-theme="light"] .navbar-brand {
+    color: #0f172a !important; 
+}
+
+/* Light mode mein theme toggle switch button background shift */
+[data-theme="light"] button[onclick="toggleTheme()"] {
+    background-color: #f1f5f9 !important;
+    color: #334155 !important;
+    border: 1px solid #cbd5e1 !important;
+}
+/* Navbar logo/brand text fix */
+nav h1,
+.navbar-brand,
+nav .logo,
+nav span {
+    color: #f8fafc !important; /* Ultra clean off-white */
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+/* --- PREMIUM MODERN SWEETALERT2 CUSTOM UI --- */
+
+/* Main Alert Box Container */
+.swal2-popup {
+    background-color: #1e293b !important; /* Premium Slate Dark (Aapke sidebar/navbar jaisa) */
+    border: 1px solid #334155 !important;
+    border-radius: 16px !important; /* Sleek Round Corners */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    font-family: 'Poppins', system-ui, sans-serif !important;
+}
+
+/* Light Mode active hone par SweetAlert bhi auto light ho jaye */
+[data-theme="light"] .swal2-popup {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Alert Title/Heading */
+.swal2-title {
+    color: #f8fafc !important; /* Dark mode plain off-white */
+    font-size: 20px !important;
+    font-weight: 600 !important;
+}
+[data-theme="light"] .swal2-title {
+    color: #0f172a !important; /* Light mode text dark color */
+}
+
+/* Alert Description Text */
+.swal2-html-container, .swal2-content {
+    color: #94a3b8 !important; /* Soft grayish look */
+    font-size: 14px !important;
+}
+[data-theme="light"] .swal2-html-container, 
+[data-theme="light"] .swal2-content {
+    color: #475569 !important;
+}
+
+/* --- BUTTONS STYLING --- */
+
+/* OK / Confirm Button - Solid Modern Custom Styling */
+.swal2-confirm {
+    background-color: #0d9488 !important; /* Custom Emerald Teal */
+    color: #ffffff !important;
+    border-radius: 8px !important;
+    padding: 10px 24px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2) !important;
+    transition: all 0.2s ease !important;
+}
+.swal2-confirm:hover {
+    background-color: #0f766e !important;
+}
+
+/* Cancel Button (Jab delete confirmation poochega) */
+.swal2-cancel {
+    background-color: #334155 !important; /* Subtle Dark slate */
+    color: #94a3b8 !important;
+    border-radius: 8px !important;
+    padding: 10px 24px !important;
+    font-size: 14px !important;
+    transition: all 0.2s ease !important;
+}
+[data-theme="light"] .swal2-cancel {
+    background-color: #f1f5f9 !important;
+    color: #475569 !important;
+}
+
+/* Success / Warning / Error Icons Adjustment */
+.swal2-icon {
+    border-width: 3px !important;
+    transform: scale(0.9); /* Halka sa small aur modern icon build */
+}
+
+/* Success Icon color matching */
+.swal2-icon.swal2-success {
+    border-color: #10b981 !important;
+    color: #10b981 !important;
+}
+.swal2-success-ring {
+    border-color: rgba(16, 185, 129, 0.2) !important;
+}
+.swal2-success-line-tip, .swal2-success-line-long {
+    background-color: #10b981 !important;
+}
+/* Theme toggle icon box integration */
+#themeIcon,
+button[onclick="toggleTheme()"] {
+    background-color: #334155 !important;
+    color: #f1f5f9 !important;
+    border: 1px solid #475569 !important;
+    border-radius: 6px !important;
+    transition: all 0.2s ease !important;
+}
+
+button[onclick="toggleTheme()"]:hover {
+    background-color: #475569 !important;
+    color: #ffffff !important;
+}
+/* --- PREMIUM SOLID BUTTON COLORS (NO GRADIENTS) --- */
+
+/* 1. Post Button - Deep Emerald Teal (Aapke theme se match karta hua) */
+#postBtn, 
+button#postBtn,
+.btn-success {
+    background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%) !important;
+    border: none !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(11, 163, 96, 0.2) !important;
+    transition: all 0.3s ease !important;
+}
+
+#postBtn:hover,
+button#postBtn:hover {
+    background: linear-gradient(135deg, #3cba92 0%, #0ba360 100%) !important;
+    box-shadow: 0 6px 20px rgba(11, 163, 96, 0.4) !important;
+    transform: translateY(-2px) !important;
+}
+/* 2. Logout Button - Luxury Crimson Red (Flat Elegant Look) */
+.btn-danger, 
+button[onclick="logout()"],
+.header button.btn-danger {
+    background-color: #be123c !important; /* Elegant Soft Dark Red */
+    border: 1px solid #e11d48 !important;
+    color: #ffffff !important;
+    font-weight: 500 !important;
+    border-radius: 15px !important;
+    transition: background-color 0.2s ease, transform 0.1s ease !important;
+}
+
+.btn-danger:hover, 
+button[onclick="logout()"]:hover {
+    background-color: #9f1239 !important; /* Hover par deep velvet red */
+    border-color: #be123c !important;
+    cursor: pointer;
+}
+
+/* Click karne par smooth clean behavior */
+#postBtn:active, 
+.btn-danger:active {
+    transform: scale(0.98) !important;
+}
+/* Placeholder Text Color Fix for Light & Dark Mode */
+.form-control::placeholder {
+    color: #94a3b8 !important; /* Premium Soft Silver/Gray color */
+    opacity: 0.8 !important;
+}
+
+
+/* Focused field placeholder */
+.form-control:focus::placeholder {
+    color: #cbd5e1 !important;
+    opacity: 1 !important;
+}
+.bi-pencil-square, 
+.bi-pencil-square::before {
+    color: #ffb74d !important; /* Soft Premium Orange/Yellow */
+    font-size: 1.2rem !important;
+    display: inline-block !important;
+    opacity: 1 !important;
+}
+
+.bi-trash, 
+.bi-trash::before {
+    color: #ff6b6b !important; /* Soft Premium Red */
+    font-size: 1.2rem !important;
+    display: inline-block !important;
+    opacity: 1 !important;
+}
+
+/* Icons ke beech mein thoda sa gap dene ke liye */
+.card-header i, .card-header button {
+    margin-left: 12px !important;
+    cursor: pointer !important;
+    transition: transform 0.2s ease !important;
+}
+
+.card-header i:hover {
+    transform: scale(1.2) !important;
+}
+/* ==========================
+   ANIMATION
+========================== */
+
+.posts .card{
+
+    animation:fade .4s ease;
+
+}
+
+@keyframes fade{
+
+from{
+
+opacity:0;
+
+transform:translateY(20px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media(max-width:992px){
+
+.postcont{
+
+margin-bottom:25px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.card-title{
+
+font-size:24px;
+
+}
+
+.card-body{
+
+min-height:180px;
+
+}
+
+.navbar-brand{
+
+font-size:22px;
+
+}
+
+}
