@@ -22,14 +22,26 @@
             <button id="themeToggle" class="btn btn-secondary ms-2" onclick="toggleTheme()" title="Toggle theme"><i
                 id="themeIcon" class="bi bi-moon-fill"></i></button>
           </li>
-          <li class="nav-item" id="logoutBtn">
-            <button class="btn btn-danger ms-2 logoutBtn" onclick="logout()">Logout</button>
+         <li class="nav-item ms-3" id="logoutBtn">
+            <div class="profile-dropdown">
+              <div class="avatar-circle" onclick="toggleProfileMenu()">
+                <span id="userInitial">U</span>
+              </div>
+              
+              <div class="dropdown-popup" id="profilePopup">
+                <p class="user-email-text" id="dropdownEmail">user@mail.com</p>
+                <hr class="dropdown-divider">
+                <button class="dropdown-logout-btn" onclick="logout()">
+                  <i class="bi bi-box-arrow-right me-2"></i> Logout
+                </button>
+              </div>
+            </div>
           </li>
         </ul>
       </div>
     </div>
   </nav>
-  <div class="container ptCont mt-5 " id="postContainer">
+  <div class="container ptCont mt-5  sticky-top" id="postContainer">
     <div class="row">
       <div class="col-sm-12 col-md-6 col-lg-4">
         <div class="card postcont p-3 m-2">

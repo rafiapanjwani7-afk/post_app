@@ -1,16 +1,18 @@
-body {
+/* Universal Reset & Google Font Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+* {
     margin: 0;
     padding: 0;
-    min-height: 100vh;
-    font-family: 'Jost', sans-serif;
-    background: linear-gradient(135deg, #eef2f7, #dce8f5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
 }
 
-.auth-page {
-    width: 100%;
+body {
+    background-color: #0f172a; /* Premium Dark Navy Background */
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.08) 0px, transparent 50%);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -18,115 +20,269 @@ body {
     padding: 20px;
 }
 
-.auth-card {
+/* Main Auth Container Card */
+.auth-container {
+    background: #1e293b; /* Sleek Slate Gray Card */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 40px;
     width: 100%;
     max-width: 420px;
-    padding: 32px;
-    background: rgba(96, 125, 139, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 28px;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24);
-    color: #fff;
-    box-sizing: border-box;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.auth-card h3 {
-    margin: 0 0 24px;
-    text-align: center;
-    font-size: 2rem;
-}
-
-.auth-card form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.auth-card input {
-    width: 100%;
-    padding: 14px 16px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    outline: none;
-    background: rgba(255, 255, 255, 0.95);
-    color: #1f2937;
-    font-size: 1rem;
-}
-
-.auth-card input:focus {
-    border-color: #26a69a;
-    box-shadow: 0 0 0 0.2rem rgba(38, 166, 154, 0.2);
-}
-
-.auth-card button {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 25px;
-    background: linear-gradient(135deg, #26a69a, #00796b);
-    color: #fff;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.auth-card button:hover {
+.auth-container:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.4), 0 15px 15px -5px rgba(0, 0, 0, 0.3);
 }
 
-.auth-note {
-    margin-top: 18px;
+/* App Title / Header */
+.auth-header {
     text-align: center;
-    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 32px;
 }
 
-.auth-note a {
-    color: #b2dfdb;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.auth-note a:hover {
+.auth-header h1 {
     color: #ffffff;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
 }
 
-::placeholder {
-    color: #6b7280;
+.auth-header p {
+    color: #94a3b8;
+    font-size: 14px;
 }
 
-.loginbtn,
-.postbtn,
-.logoutBtn {
-    background: linear-gradient(135deg, #26a69a, #00796b) !important;
-    color: white;
+/* Input Form Groups */
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    color: #cbd5e1;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+/* Modern Inputs with Icons Support */
+.form-control {
+    width: 100%;
+    background-color: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #ffffff;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #10b981; /* Dashboard Ka Post Button color match (Emerald/Green accent) */
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.form-control::placeholder {
+    color: #475569;
+}
+
+/* Premium Action Button */
+.btn-auth {
+    width: 100%;
+    background: #10b981; /* Emerald Green */
+    color: #ffffff;
     border: none;
-    border-radius: 25px;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 15px;
     font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 10px;
 }
+
+.btn-auth:hover {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+.btn-auth:active {
+    transform: translateY(0);
+}
+
+/* Toggle Form Links (Login <-> Signup switching) */
+.auth-footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+.auth-footer a {
+    color: #10b981;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 4px;
+    transition: color 0.2s ease;
+}
+
+.auth-footer a:hover {
+    color: #34d399;
+    text-decoration: underline;
+}
+
+/* SweetAlert Overrides to match theme */
 .swal2-popup {
-
-    border-radius: 20px !important;
-
-    background: linear-gradient(135deg, #607d8b, #455a64) !important;
-
-    color: white !important;
-
+    background: #1e293b !important;
+    color: #ffffff !important;
+    border-radius: 16px !important;
+}
+.swal2-title, .swal2-html-container {
+    color: #ffffff !important;
+}
+/* --- Body Setup --- */
+body {
+    background-color: #0f172a;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.08) 0px, transparent 50%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px; /* Padding thodi kam ki taake viewport height squeeze na ho */
+    overflow-y: hidden; /* Yeh window ke side scrollbar ko force-hide kar dega */
 }
 
-.swal2-confirm {
-
-    background: #26a69a !important;
-
-    border-radius: 10px !important;
-
+/* --- Main Auth Container Card --- */
+.auth-container {
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 24px 35px; /* Vertical padding 40px se kam karke 24px kar di */
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.swal2-cancel {
+/* --- App Title / Header --- */
+.auth-header {
+    text-align: center;
+    margin-bottom: 20px; /* Spacing 32px se kam karke 20px kar di */
+}
 
-    background: #e53935 !important;
+.auth-header h1 {
+    color: #ffffff;
+    font-size: 26px; /* Font size thoda perfect compact kiya */
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+}
 
-    border-radius: 10px !important;
+/* --- Input Form Groups --- */
+.form-group {
+    margin-bottom: 14px; /* Har field ke beech ka gap 20px se kam karke 14px kiya */
+    position: relative;
+}
 
+.form-group label {
+    display: block;
+    color: #cbd5e1;
+    font-size: 12.5px;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+/* --- Modern Inputs --- */
+.form-control {
+    width: 100%;
+    background-color: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 10px 14px; /* Inputs ko mazeed sleek aur stable padding di */
+    color: #ffffff;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+/* --- Premium Action Button --- */
+.btn-auth {
+    width: 100%;
+    background: #10b981;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px; /* Button height ko padding balance di */
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+}
+
+/* --- Toggle Form Links --- */
+.auth-footer {
+    text-align: center;
+    margin-top: 18px; /* Footer top margin 24px se 18px kiya */
+    font-size: 13px;
+    color: #94a3b8;
+}
+/* --- Main Auth Container Card --- */
+.auth-container {
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 24px 35px;
+    width: 100%;
+    max-width: 420px;
+    
+    /* Premium Multi-layered Shadow: Isse card ko depth milti hai */
+    box-shadow: 
+        0 4px 6px -1px rgba(0, 0, 0, 0.2), 
+        0 10px 25px -5px rgba(0, 0, 0, 0.4), 
+        0 20px 40px -10px rgba(0, 0, 0, 0.5);
+        
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Card Hover State: Hover karne par thoda upar uthega aur shadow mazeed deep ho jayegi */
+.auth-container:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+        0 10px 15px -3px rgba(0, 0, 0, 0.3), 
+        0 20px 40px -5px rgba(0, 0, 0, 0.5), 
+        0 30px 60px -15px rgba(16, 185, 129, 0.1); /* Halka sa green neon aura effect */
+}
+
+/* --- Modern Inputs --- */
+.form-control {
+    width: 100%;
+    background-color: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: #ffffff;
+    font-size: 14px;
+    
+    /* Inputs ki andruni shadow subtle depth ke liye */
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+}
+
+/* Input Focus State: Jab input field par click hoga */
+.form-control:focus {
+    outline: none;
+    border-color: #10b981; /* Premium Emerald Green Border */
+    
+    /* Beautiful Emerald Glow Effect: Glow input ko professional banayega */
+    box-shadow: 
+        inset 0 2px 4px 0 rgba(0, 0, 0, 0.2),
+        0 0 0 4px rgba(16, 185, 129, 0.25); 
 }

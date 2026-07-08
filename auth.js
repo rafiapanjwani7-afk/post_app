@@ -14,6 +14,7 @@ async function signup(event) {
     const name = document.getElementById('signName').value.trim()
     const email = document.getElementById('signEmail').value.trim()
     const password = document.getElementById('signPassword').value
+    const number = document.getElementById('signNumber').value.trim()
 
     if (!name || !email || !password) {
         Swal.fire('Error', 'Please fill in all fields!', 'error')
@@ -43,7 +44,8 @@ async function signup(event) {
         password,
         options: {
             data: {
-                name
+                first_name: name,
+                number: number
             }
         }
     })
@@ -57,14 +59,15 @@ async function signup(event) {
     Swal.fire({
         icon: 'success',
         title: `${name}, Registration Successful`,
-        text: 'Please check your email for verification.',
-        confirmButtonText: 'Proceed to Login',
-        showConfirmButton: false
-    })// Timeout taake user success alert dekh sake
-        setTimeout(() => {
-            window.location.href = "dashboard.html"
-        }, 2000);
+        text: 'Please check your email for verification link.',
+        showConfirmButton: true,
+        confirmButtonText: 'OK'
+    })
 
+    // Email verification ke liye user ko dashboard ke bajaye login page par bhejna behtar hai
+    setTimeout(() => {
+        window.location.href = "login.html"
+    }, 2500);
 }
 
 // ================= LOGIN =================
@@ -78,8 +81,12 @@ if (loginForm) {
 async function login(event) {
     event.preventDefault()
 
-    const loginEmail = document.getElementById('loginEmail').value.trim()
-    const loginPassword = document.getElementById('loginPassword').value
+    // NEW HTML IDs: 'loginEmail' aur 'loginPassword' ko badal kar 'email' aur 'password' kiya hai
+    const loginEmail = document.getElementById('email').value.trim()
+    const loginPassword = document.getElementById('password').value
+
+    const submitBtn = loginForm.querySelector('button[type="submit"]')
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.style.opacity = '.7'; }
 
     try {
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -91,6 +98,7 @@ async function login(event) {
         
         if (error) {
             console.log(error);
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = ''; }
             Swal.fire({
                 title: 'Error!',
                 text: error.message,
@@ -101,12 +109,14 @@ async function login(event) {
                 title: 'Success!',
                 text: 'Login Successful',
                 icon: 'success',
+                showConfirmButton: false
             });
             setTimeout(() => {
                 window.location.href = "dashboard.html"
             }, 2000);
         }
     } catch (error) {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = ''; }
         Swal.fire({
             title: 'Error!',
             text: 'Login failed',
@@ -119,37 +129,26 @@ async function login(event) {
 supabase.auth.onAuthStateChange((event, session) => {
     console.log('Event:', event)
     console.log('Session:', session)
-if (event === 'INITIAL_SESSION') {
-    console.log("Please log in again.");
-    
-    // if (!session) {
-    //     Swal.fire({
-    //         icon: 'info',
-    //         title: 'Session Expired',
-    //         text: 'Please log in again.',
-    //         confirmButtonText: 'OK'
-    //     }).then(() => {
-    //         location.href = "index.html";
-    //     });
-    // }
-}
-if (event === 'SIGNED_IN') {
-    console.log('User:', session?.user?.email)
-    // Swal.fire({
-    //     icon: 'success',
-    //     title: 'Welcome Back!',
-    // })
-    // location.href = 'dashboard.html'
-}
-
-   
+    if (event === 'INITIAL_SESSION') {
+        console.log("Please log in again.");
+        swal.fire({
+            title: 'Session Expired',
+            text: 'Please log in again.',
+            icon: 'warning'
+        });
+    }
+    if (event === 'SIGNED_IN') {
+        console.log('User:', session?.user?.email)
+        swal.fire({
+            title: 'Welcome!',
+            text: `Hello, ${session?.user?.email}`,
+            icon: 'success'
+        });
+    }
 })
-
 
 // Make functions available globally if needed
 window.signup = signup
 window.login = login
-
-
 
 export { supabase }

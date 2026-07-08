@@ -101,7 +101,110 @@ body {
     color:white!important;
 
 }
+/* --- PREMIUM AVATAR PROFILE DROPDOWN --- */
 
+.profile-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Avatar Circle Base */
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%); /* Post btn jaisa smooth gradient */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.avatar-circle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(11, 163, 96, 0.4);
+}
+
+.avatar-circle span {
+    color: #ffffff !important;
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Dropdown Popup Panel */
+.dropdown-popup {
+    display: none; /* Default mein chhupa rahega */
+    position: absolute;
+    right: 0;
+    top: 50px;
+    background-color: #1e293b; /* Dark Mode Canvas */
+    border: 1px solid #334155;
+    min-width: 200px;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    z-index: 1100;
+    animation: fadeInDropdown 0.2s ease;
+}
+
+/* Light mode support */
+[data-theme="light"] .dropdown-popup {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.dropdown-popup.show {
+    display: block; /* Click par show karne ke liye */
+}
+
+.user-email-text {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 8px;
+    padding: 0 4px;
+    word-break: break-all;
+}
+[data-theme="light"] .user-email-text {
+    color: #64748b;
+}
+
+.dropdown-divider {
+    border-color: #334155;
+    margin: 8px 0;
+}
+[data-theme="light"] .dropdown-divider {
+    border-color: #e2e8f0;
+}
+
+/* Smooth Premium Logout Button inside Dropdown */
+.dropdown-logout-btn {
+    width: 100%;
+    background-color: #be123c;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-logout-btn:hover {
+    background-color: #9f1239;
+}
+
+@keyframes fadeInDropdown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 /* ==========================
    LEFT POST FORM
 ========================== */
