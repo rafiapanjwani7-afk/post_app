@@ -107,7 +107,33 @@ body {
     position: relative;
     display: inline-block;
 }
+.logo-icon-box {
+    background: linear-gradient(135deg, #10b981, #3b82f6);
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
 
+.logo-letter {
+    color: #fff;
+    font-weight: 800;
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+}
+
+.brand-text {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -.5px;
+    background: linear-gradient(to right, #fff, #cbd5e1);
+     -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent;
+    font-family: 'Inter', sans-serif;
+}
 /* Avatar Circle Base */
 .avatar-circle {
     width: 40px;
@@ -218,7 +244,18 @@ body {
     padding:22px;
 
     box-shadow:0 10px 25px rgba(0,0,0,.08);
+    position:sticky;
+    top:35px;
 
+}
+#previewImg{
+    display:block;
+    margin:auto;
+    object-fit:cover;
+}
+
+#previewImg.d-none{
+    display:none !important;
 }
 
 /* ==========================
@@ -284,7 +321,31 @@ body {
     transform:scale(1.08);
 
 }
+.userimg{
 
+    width:50px;
+
+    height:50px;
+
+     background:linear-gradient(135deg,#14b8a6,#0f766e);
+
+    border-radius:10px;
+
+    object-fit:cover;
+
+    cursor:pointer;
+
+    border:3px solid transparent;
+     border-color:var(--primary)!important;
+
+    box-shadow:0 0 15px rgba(20,184,166,.5)
+
+}
+.userimg:hover{
+
+    transform:scale(1.08);
+
+}
 .addImg{
 
     border-color:var(--primary)!important;

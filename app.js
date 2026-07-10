@@ -7,12 +7,11 @@ var title = document.getElementById("title");
 var description = document.getElementById("description");
 let editIndex = null;
 let userName = "";
-let imageUrl = "";
 let userid;
 let Email;
 
 // 1. Popup menu ko toggle karne ka function
-window.toggleProfileMenu = function() {
+window.toggleProfileMenu = function () {
     const popup = document.getElementById("profilePopup");
     if (popup) {
         popup.classList.toggle("show");
@@ -20,13 +19,35 @@ window.toggleProfileMenu = function() {
 }
 
 // Bahar click karne par dropdown auto close ho jaye
-window.addEventListener("click", function(e) {
+window.addEventListener("click", function (e) {
     const dropdown = document.querySelector(".profile-dropdown");
     const popup = document.getElementById("profilePopup");
     if (dropdown && popup && !dropdown.contains(e.target)) {
         popup.classList.remove("show");
     }
 });
+
+// FIXED HOISTING: Defined up here so window.onload and searchPosts can access it immediately
+async function fetchLikeCounts() {
+    try {
+        const { data, error } = await supabase.from("like_table").select("post_id");
+        if (error) throw error;
+
+        // Group counts by post_id
+        const counts = {};
+        data.forEach(like => {
+            counts[like.post_id] = (counts[like.post_id] || 0) + 1;
+        });
+
+        // Update DOM elements
+        Object.keys(counts).forEach(postId => {
+            const el = document.getElementById(`like-${postId}`);
+            if (el) el.innerText = counts[postId];
+        });
+    } catch (err) {
+        console.log("Error fetching initial likes:", err);
+    }
+}
 
 async function searchPosts() {
     let searchInput = document.getElementById("searchInput").value;
@@ -45,12 +66,16 @@ async function searchPosts() {
             return;
         }
 
-          data.forEach(post => {
-    let currentTextColor = post.text_color || "#ffffff";
-    let displayUserName = post.user_name || 'Anonymous'; 
-    let displayEmail = post.email ? `~${post.email}` : '';
+        // let currentTheme = localStorage.getItem('theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        // let emailColor = (currentTheme === "dark") ? "#cbd5e1" : "#5c636a";
+      let currentTheme = localStorage.getItem('theme') || 'light';
+let emailColor = (currentTheme === "dark") ? "#cbd5e1" : "#475569";
+        data.forEach(post => {
+            let currentTextColor = post.text_color || "#ffffff";
+            let displayUserName = post.user_name || 'Anonymous';
+            let displayEmail = post.email ? `~${post.email}` : '';
 
-    postsContainer.innerHTML += `
+            postsContainer.innerHTML += `
 <div class="card mb-3" style="border: 1px solid rgba(255,255,255,0.12); overflow: hidden;">
     <div class="card-header d-flex justify-content-between align-items-center">
         <span>
@@ -77,8 +102,8 @@ async function searchPosts() {
     </div>
 
     <div class="card-footer d-flex justify-content-around bg-transparent border-top-0 pt-1 pb-2">
-        <button class="btn btn-sm d-flex align-items-center gap-2 text-secondary" onclick="Swal.fire('Liked!', 'You liked this post.', 'success')">
-            <i class="bi bi-hand-thumbs-up" style="font-size: 16px;"></i> Like
+        <button class="btn btn-sm d-flex align-items-center gap-2 text-secondary" onclick="toggleLike(${post.id})">
+            <i class="bi bi-hand-thumbs-up" style="font-size: 16px;"></i><span id="like-${post.id}">0</span> Like
         </button>
         <button class="btn btn-sm d-flex align-items-center gap-2 text-secondary" onclick="Swal.fire('Comments Coming Soon!', 'Working on live interactions.', 'info')">
             <i class="bi bi-chat-left-text" style="font-size: 16px;"></i> Comment
@@ -86,8 +111,10 @@ async function searchPosts() {
     </div>
 </div>
 `;
-});
-        
+        });
+
+        await fetchLikeCounts(); // Refresh on search render
+
         if (!data.length) {
             Swal.fire({
                 icon: "info",
@@ -103,18 +130,21 @@ async function searchPosts() {
 
 window.onload = async function () {
     const postsContainer = document.getElementById("posts");
-    
-    // ONE CENTRALIZED SYSTEM TO FETCH USER INFO SAFELY
+    const imgInput = document.getElementById("imgInput");
+    if (imgInput) {
+        imgInput.addEventListener("change", previewFile);
+    }
+
+    // SYSTEM TO FETCH USER INFO SAFELY
     try {
         const { data: { user }, error } = await supabase.auth.getUser();
         if (user) {
             userid = user.id;
             Email = user.email;
-            userName = user.user_metadata?.first_name || user.email.split('@')[0]; 
-            
+            userName = user.user_metadata?.first_name || user.email.split('@')[0];
+
             const firstLetter = Email.charAt(0).toUpperCase();
-            
-            // Dynamic UI Elements Allocation (Avatar & Email panel)
+
             if (document.getElementById("userInitial")) {
                 document.getElementById("userInitial").innerText = firstLetter;
             }
@@ -146,17 +176,17 @@ window.onload = async function () {
             return;
         }
 
-        postsContainer.innerHTML = ""; // Clear loader/previous templates
-let currentTheme = localStorage.getItem('theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        
-        // Agar dark theme ho to email silver white (#cbd5e1) dikhe, warna dark gray (#5c636a) dikhe
-        let emailColor = (currentTheme === "dark") ? "#cbd5e1" : "#5c636a";
+        postsContainer.innerHTML = "";
+        // let currentTheme = localStorage.getItem('theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        // let emailColor = (currentTheme === "dark") ? "#cbd5e1" : "#5c636a";
+        let currentTheme = localStorage.getItem('theme') || 'light';
+        let emailColor = (currentTheme === "dark") ? "#cbd5e1" : "#475569";
         data.forEach(post => {
-    let currentTextColor = post.text_color || "#ffffff";
-    let displayUserName = post.user_name || 'Anonymous'; 
-    let displayEmail = post.email ? `~${post.email}` : '';
+            let currentTextColor = post.text_color || "#ffffff";
+            let displayUserName = post.user_name || 'Anonymous';
+            let displayEmail = post.email ? `~${post.email}` : '';
 
-    postsContainer.innerHTML += `
+            postsContainer.innerHTML += `
 <div class="card mb-3" style="border: 1px solid rgba(255,255,255,0.12); overflow: hidden;">
     <div class="card-header d-flex justify-content-between align-items-center">
         <span>
@@ -182,100 +212,204 @@ let currentTheme = localStorage.getItem('theme') || (window.matchMedia && window
         <p style="color:${currentTextColor}">${post.description}</p>
     </div>
 
-    <div class="card-footer d-flex justify-content-around bg-transparent border-top-0 pt-1 pb-2">
-        <button class="btn btn-sm d-flex align-items-center gap-2 text-secondary" onclick="Swal.fire('Liked!', 'You liked this post.', 'success')">
-            <i class="bi bi-hand-thumbs-up" style="font-size: 16px;"></i> Like
-        </button>
-        <button class="btn btn-sm d-flex align-items-center gap-2 text-secondary" onclick="Swal.fire('Comments Coming Soon!', 'Working on live interactions.', 'info')">
-            <i class="bi bi-chat-left-text" style="font-size: 16px;"></i> Comment
-        </button>
+    <div class="card-footer bg-transparent border-top-0 pt-2 pb-2">
+        <div class="d-flex justify-content-around w-100 mb-2">
+            <button class="btn btn-sm d-flex align-items-center gap-2 text-secondary" onclick="toggleLike(${post.id})">
+                <i class="bi bi-hand-thumbs-up" style="font-size: 16px;"></i><span id="like-${post.id}">0</span> Like
+            </button>
+            <button class="btn btn-sm d-flex align-items-center gap-2 text-secondary" onclick="toggleCommentSection(${post.id})">
+                <i class="bi bi-chat-left-text" style="font-size: 16px;"></i> Comment
+            </button>
+        </div>
+        
+        <div id="comment-box-${post.id}" class="d-none w-100 mt-2 border-top pt-3">
+            <div id="comments-list-${post.id}" class="mb-3 overflow-y-auto" style="max-height: 150px;"></div>
+            
+            <div class="input-group">
+                <input type="text" id="comment-input-${post.id}" class="form-control bg-dark text-white border-secondary" placeholder="Write a comment..." style="font-size: 14px; padding: 10px;">
+                <button class="btn px-4 fw-bold text-white" style="background-color: #14b8a6; border: none; transition: 0.2s;" onmouseover="this.style.backgroundColor='#0d9488'" onmouseout="this.style.backgroundColor='#14b8a6'" onclick="addComment(${post.id})">Send</button>
+            </div>
+        </div>
     </div>
 </div>
 `;
-});
+        });
+
+        await fetchLikeCounts(); // Securely run now that it's positioned above
     } catch (err) {
         console.log("Catch Block Error:", err);
     }
 };
-// let imageInput = document.getElementById("imgInput");
-// let previewImg = document.getElementById("previewImg");
-// imageInput.addEventListener("change", function () {
+async function toggleCommentSection(postId) {
+    const commentBox = document.getElementById(`comment-box-${postId}`);
+    if (!commentBox) return;
 
-//     const file = imageInput.files[0];
+    // Toggle hidden class
+    commentBox.classList.toggle("d-none");
 
-//     if (file) {
+    // Agar section khula hai toh purane comments fetch karke dikhao
+    if (!commentBox.classList.contains("d-none")) {
+        await fetchComments(postId);
+    }
+}
+// New Comment input data ko table mein insert karne ka function
+async function addComment(postId) {
+    if (!userid) {
+        Swal.fire("Error", "Please login first to comment.", "error");
+        return;
+    }
 
-//         const reader = new FileReader();
+    const input = document.getElementById(`comment-input-${postId}`);
+    if (!input) return;
+    const text = input.value.trim();
 
-//         reader.onload = function (e) {
+    if (!text) return;
 
-//             previewImg.src = e.target.result;
-//             previewImg.style.display = "block";
+    try {
+        const { error } = await supabase
+            .from("comment_table")
+            .insert({
+                post_id: postId,
+                user_id: userid,
+                user_name: userName,
+                comment_text: text
+            });
 
-//         };
+        if (error) throw error;
 
-//         reader.readAsDataURL(file);
+        input.value = ""; // Input field ko khali karein
+        
+        // Live UI refresh karne ke liye list ko dobara fetch karein
+        await fetchComments(postId); 
+        
+        // Auto scroll to bottom taaki naya comment foran nazar aaye
+        const container = document.getElementById(`comments-list-${postId}`);
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
 
-//     }
+    } catch (err) {
+        console.log("Error inserting comment:", err);
+        Swal.fire("Error", "Could not submit your comment.", "error");
+    }
+}
+// Database se kisi specific post ke saare comments fetch karne ka function
+async function fetchComments(postId) {
+    const container = document.getElementById(`comments-list-${postId}`);
+    if (!container) return;
 
-// });
-// async function uploadImage() {
+    try {
+        const { data, error } = await supabase
+            .from("comment_table") 
+            .select("*")
+            .eq("post_id", postId)
+            .order("id", { ascending: true }); // Purane comments upar, naye neeche
 
-//     const file = document.getElementById("imgInput").files[0];
+        if (error) throw error;
 
-//     if (!file) {
-//         console.log("No image selected");
-//         return null;
-//     }
+        container.innerHTML = "";
+        
+        if (data.length === 0) {
+            container.innerHTML = `<p class="text-muted small ps-2 mb-1" style="font-size:12px;">No comments yet. Be the first to comment!</p>`;
+            return;
+        }
 
-//     const fileName = `${Date.now()}-${file.name}`;
+        // Loop chalakar saare comments ko dynamic HTML ke zariye render karein
+        data.forEach(c => {
+            container.innerHTML += `
+                <div class="p-2 mb-1 rounded bg-dark text-start" style="font-size: 13px; border-left: 3px solid #14b8a6;">
+                    <strong style="color: #14b8a6;">${c.user_name}:</strong> 
+                    <span class="text-white-50" style="word-break: break-word;">${c.comment_text}</span>
+                </div>
+            `;
+        });
+        container.scrollTop = container.scrollHeight;
 
-//     console.log("Uploading file:", fileName);
+    } catch (err) {
+        console.log("Error fetching comments:", err);
+    }
+}
 
+async function toggleLike(postId) {
+    if (!userid) {
+        Swal.fire("Error", "Please login first to like posts.", "error");
+        return;
+    }
 
-//     const { error } = await supabase.storage
-//         .from("post-images")
-//         .upload(fileName, file);
+    try {
+        const { data: likeData, error: likeError } = await supabase
+            .from('like_table')
+            .select("*")
+            .eq('post_id', postId)
+            .eq('user_id', userid);
 
+        if (likeError) throw likeError;
 
-//     if (error) {
-//         console.log("Upload Error:", error);
-//         return null;
-//     }
+        if (likeData && likeData.length > 0) {
+            const { error: deleteError } = await supabase
+                .from('like_table')
+                .delete()
+                .eq('post_id', postId)
+                .eq('user_id', userid);
+            if (deleteError) throw deleteError;
+        } else {
+            const { error: insertError } = await supabase
+                .from("like_table")
+                .insert({ post_id: postId, user_id: userid });
+            if (insertError) throw insertError;
+        }
 
+        const { count } = await supabase.from('like_table').select('*', { count: 'exact', head: true }).eq('post_id', postId);
+        document.getElementById(`like-${postId}`).innerText = count || 0;
 
-//     const { data } = supabase.storage
-//         .from("post-images")
-//         .getPublicUrl(fileName);
-
-
-//     console.log("Image URL:", data.publicUrl);
-
-
-//     return data.publicUrl;
-// }
+    } catch (err) {
+        console.log("Error in toggleLike handling:", err);
+    }
+}
 
 async function post() {
     var title = document.getElementById("title");
     var description = document.getElementById("description");
+    let imageInput = document.getElementById("imgInput");
+    let previewImg = document.getElementById("previewImg");
 
     if (title.value.trim() && description.value.trim()) {
         let colorToSave = selectedTextColor || "#ffffff";
-         // let imageUrl = await uploadImage();
-        // console.log("IMAGE URL:", imageUrl);
+        let imageFile = imageInput ? imageInput.files[0] : null;
+        let finalBgUrl = "";
+
+        if (imageFile) {
+            let fileExtension = imageFile.name.split('.').pop();
+            let fileName = `${Date.now()}_${fileExtension}`;
+
+            const { error: uploadError } = await supabase.storage.from('post-images').upload(fileName, imageFile);
+
+            if (uploadError) {
+                Swal.fire("Image Upload Failed!", "There was an error uploading the image.", "error");
+                return;
+            }
+
+            const { data: imageData } = supabase.storage.from('post-images').getPublicUrl(fileName);
+            finalBgUrl = imageData.publicUrl;
+
+        } else if (cardBg) {
+            finalBgUrl = cardBg;
+        } else {
+            Swal.fire("No Image Selected!", "Please select or upload an image for the post.", "error");
+            return;
+        }
 
         if (edited) {
             try {
-                const { data, error } = await supabase
+                const { error } = await supabase
                     .from('post_app_table')
                     .update({
                         title: title.value,
                         description: description.value,
-                        bg_img: cardBg,
+                        bg_img: finalBgUrl,
                         text_color: colorToSave
                     })
-                    .eq('id', editIndex)
-                    .select();
+                    .eq('id', editIndex);
 
                 if (error) console.log(error);
 
@@ -293,19 +427,21 @@ async function post() {
             }
         } else {
             try {
-                const { data, error } = await supabase
+                const { error } = await supabase
                     .from('post_app_table')
                     .insert({
                         title: title.value,
                         description: description.value,
-                        bg_img: cardBg,
+                        bg_img: finalBgUrl,
                         text_color: colorToSave,
                         email: Email,
                         user_id: userid,
                         user_name: userName
-                    })
-                    .select();
-                if (error) console.log(error);
+                    });
+
+                if (error) {
+                    console.log("Database Insert Error:", error);
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -314,8 +450,11 @@ async function post() {
         title.value = "";
         description.value = "";
         cardBg = "";
-        // previewImg.style.display = "none";
-        // previewImg.src = "";
+        if (imageInput) imageInput.value = "";
+        if (previewImg) {
+            previewImg.classList.add("d-none");
+            previewImg.src = "";
+        }
         location.reload();
     } else {
         Swal.fire({
@@ -341,7 +480,8 @@ async function editPost(event, id, desc, titleVal, bg_img, textColor, currentTex
     document.getElementById("description").value = desc;
     cardBg = bg_img;
     selectedTextColor = textColor || "#ffffff";
-    
+    const card = event.target.closest(".card");
+    if (card) card.remove();
     edited = true;
     editIndex = id;
     let postBtn = document.getElementById("postBtn");
@@ -364,8 +504,32 @@ async function logout() {
     });
 }
 
+function previewFile(e) {
+    const previewImg = document.getElementById("previewImg");
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    previewImg.src = URL.createObjectURL(file);
+    previewImg.classList.remove("d-none");
+    previewImg.style.display = "block";
+
+    cardBg = "";
+    document.querySelectorAll(".bgImg").forEach(img => {
+        img.classList.remove("addImg");
+    });
+}
+
 function addImg(src) {
     cardBg = src;
+    let imageInput = document.getElementById("imgInput");
+    let previewImg = document.getElementById("previewImg");
+    if (imageInput) imageInput.value = "";
+    if (previewImg) {
+        previewImg.classList.add("d-none");
+        previewImg.src = "";
+    }
+
     const images = document.querySelectorAll(".bgImg");
     images.forEach((img) => {
         img.classList.remove("addImg");
@@ -432,6 +596,16 @@ function applyTheme(theme) {
         }
     }
 }
+// function applyTheme(theme) {
+//     document.documentElement.setAttribute("data-theme", theme);
+//     localStorage.setItem("theme", theme);
+    
+//     const icon = document.getElementById("themeIcon");
+//     if (icon) {
+//         icon.className = theme === "dark" ? "bi bi-sun-fill" : "bi bi-moon-fill";
+//         icon.style.color = theme === "dark" ? "#ffffff" : "#1e293b"; 
+//     }
+// }
 
 function toggleTheme() {
     const current = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
@@ -447,12 +621,20 @@ function toggleTheme() {
 window.logout = logout;
 window.post = post;
 window.addImg = addImg;
+window.previewFile = previewFile;
 window.applycolor = applycolor;
 window.editPost = editPost;
 window.delpost = delpost;
 window.searchPosts = searchPosts;
 window.applyTheme = applyTheme;
 window.toggleTheme = toggleTheme;
+window.toggleProfileMenu = toggleProfileMenu;
+window.toggleLike = toggleLike;
+window.fetchLikeCounts = fetchLikeCounts;
+window.toggleCommentSection = toggleCommentSection;
+window.addComment = addComment;
+window.fetchComments = fetchComments;
+window.fetchLikeCounts = fetchLikeCounts;
 
 (function initTheme() {
     const stored = localStorage.getItem('theme');
