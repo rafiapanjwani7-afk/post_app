@@ -146,9 +146,20 @@ supabase.auth.onAuthStateChange((event, session) => {
         });
     }
 })
+async function loginWithGoogle(){
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: 'http://127.0.0.1:5500/dashboard.html'
+        // redirectTo: 'https://rafiapanjwani7-afk.github.io/post_app/dashboard.html'
+        
+        }
+      })
+}
 
 // Make functions available globally if needed
 window.signup = signup
 window.login = login
+window.loginWithGoogle=loginWithGoogle
 
 export { supabase }
