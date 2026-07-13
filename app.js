@@ -66,10 +66,9 @@ async function searchPosts() {
             return;
         }
 
-        // let currentTheme = localStorage.getItem('theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        // let emailColor = (currentTheme === "dark") ? "#cbd5e1" : "#5c636a";
-      let currentTheme = localStorage.getItem('theme') || 'light';
-let emailColor = (currentTheme === "dark") ? "#cbd5e1" : "#475569";
+
+        let currentTheme = localStorage.getItem('theme') || 'light';
+        let emailColor = (currentTheme === "dark") ? "#cbd5e1" : "#475569";
         data.forEach(post => {
             let currentTextColor = post.text_color || "#ffffff";
             let displayUserName = post.user_name || 'Anonymous';
@@ -141,9 +140,12 @@ window.onload = async function () {
         if (user) {
             userid = user.id;
             Email = user.email;
-            userName = user.user_metadata?.first_name || user.email.split('@')[0];
+            userName = `${user.user_metadata?.first_name || ""} ${user.user_metadata?.last_name || ""}`.trim();
+            if (!userName) {
+                userName = user.email.split("@")[0];
+            }
 
-            const firstLetter = Email.charAt(0).toUpperCase();
+            const firstLetter = userName.charAt(0).toUpperCase();
 
             if (document.getElementById("userInitial")) {
                 document.getElementById("userInitial").innerText = firstLetter;
@@ -177,8 +179,6 @@ window.onload = async function () {
         }
 
         postsContainer.innerHTML = "";
-        // let currentTheme = localStorage.getItem('theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        // let emailColor = (currentTheme === "dark") ? "#cbd5e1" : "#5c636a";
         let currentTheme = localStorage.getItem('theme') || 'light';
         let emailColor = (currentTheme === "dark") ? "#cbd5e1" : "#475569";
         data.forEach(post => {
@@ -278,10 +278,10 @@ async function addComment(postId) {
         if (error) throw error;
 
         input.value = ""; // Input field ko khali karein
-        
+
         // Live UI refresh karne ke liye list ko dobara fetch karein
-        await fetchComments(postId); 
-        
+        await fetchComments(postId);
+
         // Auto scroll to bottom taaki naya comment foran nazar aaye
         const container = document.getElementById(`comments-list-${postId}`);
         if (container) {
@@ -300,7 +300,7 @@ async function fetchComments(postId) {
 
     try {
         const { data, error } = await supabase
-            .from("comment_table") 
+            .from("comment_table")
             .select("*")
             .eq("post_id", postId)
             .order("id", { ascending: true }); // Purane comments upar, naye neeche
@@ -308,7 +308,7 @@ async function fetchComments(postId) {
         if (error) throw error;
 
         container.innerHTML = "";
-        
+
         if (data.length === 0) {
             container.innerHTML = `<p class="text-muted small ps-2 mb-1" style="font-size:12px;">No comments yet. Be the first to comment!</p>`;
             return;
@@ -500,7 +500,7 @@ async function logout() {
         timer: 1200,
         showConfirmButton: false
     }).then(() => {
-        window.location.href = 'index.html';
+        window.location.href = 'login.html';
     });
 }
 
@@ -574,7 +574,6 @@ async function delpost(event, id, UserId) {
     const card = event.target.closest(".card");
     if (card) card.remove();
 }
-
 function applycolor(element) {
     var colorbox = document.getElementsByClassName('colorbox');
     for (var i = 0; i < colorbox.length; i++) {
@@ -583,7 +582,6 @@ function applycolor(element) {
     element.classList.add('selected');
     selectedTextColor = element.style.backgroundColor;
 }
-
 function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
@@ -594,29 +592,19 @@ function applyTheme(theme) {
         } else {
             icon.className = "bi bi-moon-fill";
         }
+        icon.style.setProperty('color', '#ffffff', 'important');
     }
 }
-// function applyTheme(theme) {
-//     document.documentElement.setAttribute("data-theme", theme);
-//     localStorage.setItem("theme", theme);
-    
-//     const icon = document.getElementById("themeIcon");
-//     if (icon) {
-//         icon.className = theme === "dark" ? "bi bi-sun-fill" : "bi bi-moon-fill";
-//         icon.style.color = theme === "dark" ? "#ffffff" : "#1e293b"; 
-//     }
-// }
-
 function toggleTheme() {
     const current = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
     const nextTheme = current === "dark" ? "light" : "dark";
     applyTheme(nextTheme);
+    
     const emailElements = document.querySelectorAll('.email-text-element');
     emailElements.forEach(el => {
-        el.style.setProperty('color', (nextTheme === "dark" ? "#cbd5e1" : "#5c636a"), 'important');
+        el.style.setProperty('color', (nextTheme === "dark" ? "#cbd5e1" : "#475569"), 'important');
     });
 }
-
 // Global functions scoping
 window.logout = logout;
 window.post = post;
@@ -634,7 +622,7 @@ window.fetchLikeCounts = fetchLikeCounts;
 window.toggleCommentSection = toggleCommentSection;
 window.addComment = addComment;
 window.fetchComments = fetchComments;
-window.fetchLikeCounts = fetchLikeCounts;
+
 
 (function initTheme() {
     const stored = localStorage.getItem('theme');

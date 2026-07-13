@@ -3,22 +3,20 @@ import supabase from "./supabase.js";
 // ================= SIGNUP =================
 
 const signupForm = document.getElementById('signupForm')
-
 if (signupForm) {
     signupForm.addEventListener('submit', signup)
 }
-
 async function signup(event) {
     event.preventDefault()
-
-    const name = document.getElementById('signName').value.trim()
+    const firstName = document.getElementById('firstName').value.trim()
+    const lastName = document.getElementById('lastName').value.trim()
     const email = document.getElementById('signEmail').value.trim()
     const password = document.getElementById('signPassword').value
     const number = document.getElementById('signNumber').value.trim()
 
-    if (!name || !email || !password) {
-        Swal.fire('Error', 'Please fill in all fields!', 'error')
-        return
+    if (!firstName || !lastName || !email || !number || !password) {
+        Swal.fire("Error", "Please fill in all fields!", "error");
+        return;
     }
     const passwordRe = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/
     if (!passwordRe.test(password)) {
@@ -44,7 +42,8 @@ async function signup(event) {
         password,
         options: {
             data: {
-                first_name: name,
+                first_name: firstName,
+                last_name: lastName,
                 number: number
             }
         }
@@ -58,15 +57,13 @@ async function signup(event) {
 
     Swal.fire({
         icon: 'success',
-        title: `${name}, Registration Successful`,
+        title: `${firstName}, Registration Successful`,
         text: 'Please check your email for verification link.',
         showConfirmButton: true,
         confirmButtonText: 'OK'
     })
-
-    // Email verification ke liye user ko dashboard ke bajaye login page par bhejna behtar hai
     setTimeout(() => {
-        window.location.href = "login.html"
+        window.location.href = "dashboard.html"
     }, 2500);
 }
 
@@ -80,8 +77,6 @@ if (loginForm) {
 
 async function login(event) {
     event.preventDefault()
-
-    // NEW HTML IDs: 'loginEmail' aur 'loginPassword' ko badal kar 'email' aur 'password' kiya hai
     const loginEmail = document.getElementById('email').value.trim()
     const loginPassword = document.getElementById('password').value
 
@@ -93,9 +88,9 @@ async function login(event) {
             email: loginEmail,
             password: loginPassword,
         })
-        
+
         console.log(data);
-        
+
         if (error) {
             console.log(error);
             if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = ''; }
@@ -109,7 +104,7 @@ async function login(event) {
                 title: 'Success!',
                 text: 'Login Successful',
                 icon: 'success',
-                showConfirmButton: false
+                showConfirmButton: '#10b981'
             });
             setTimeout(() => {
                 window.location.href = "dashboard.html"
@@ -130,36 +125,46 @@ supabase.auth.onAuthStateChange((event, session) => {
     console.log('Event:', event)
     console.log('Session:', session)
     if (event === 'INITIAL_SESSION') {
-        console.log("Please log in again.");
-        swal.fire({
-            title: 'Session Expired',
-            text: 'Please log in again.',
+        // console.log("Please log in again.");
+        Swal.fire({
+            title: "Account Not Found",
+            html: `<a href="index.html" style="color: #14b8a6; font-weight: bold; text-decoration: none;">Create an Account</a>`,
             icon: 'warning'
         });
     }
     if (event === 'SIGNED_IN') {
         console.log('User:', session?.user?.email)
-        swal.fire({
+        Swal.fire({
             title: 'Welcome!',
-            text: `Hello, ${session?.user?.email}`,
+            text: `Hello, ${session.user.user_metadata.first_name || session.user.email}`,
             icon: 'success'
         });
     }
+    // if (event === "SIGNED_OUT") {
+    //     Swal.fire({
+    //         icon: "info",
+    //         title: "Logged Out",
+    //         text: "You have been signed out."
+    //     });
+    // }
 })
-async function loginWithGoogle(){
-    const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: 'http://127.0.0.1:5500/dashboard.html'
-        // redirectTo: 'https://rafiapanjwani7-afk.github.io/post_app/dashboard.html'
-        
+async function loginWithGoogle() {
+    try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: 'http://127.0.0.1:5500/dashboard.html'
+                // redirectTo: 'https://rafiapanjwani7-afk.github.io/post_app/dashboard.html'
+            }
+        }); if (error) {
+            console.log(error);
         }
-      })
+    } catch (error) {
+        console.log(error);
+    }
 }
-
-// Make functions available globally if needed
 window.signup = signup
 window.login = login
-window.loginWithGoogle=loginWithGoogle
+window.loginWithGoogle = loginWithGoogle
 
 export { supabase }
