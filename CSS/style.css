@@ -882,6 +882,13 @@ nav span {
     color: #ffffff !important;
 }
 
+.no-comment-text {
+    color: #64748b !important; /* Slate color for light mode */
+}
+
+[data-theme="dark"] .no-comment-text {
+    color: #94a3b8 !important; /* Light slate / grayish-white for dark mode */
+}
 /* Hover dynamic state (Optional upgrade) */
 .theme-toggle-btn:hover #themeIcon {
     transform: rotate(20deg);

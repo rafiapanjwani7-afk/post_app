@@ -1,4 +1,4 @@
-import supabase from "./supabase.js";
+import supabase from "../supabase.js";
 
 // ================= SIGNUP =================
 
@@ -140,27 +140,32 @@ supabase.auth.onAuthStateChange((event, session) => {
             icon: 'success'
         });
     }
-    // if (event === "SIGNED_OUT") {
-    //     Swal.fire({
-    //         icon: "info",
-    //         title: "Logged Out",
-    //         text: "You have been signed out."
-    //     });
-    // }
+    if (event === "SIGNED_OUT") {
+        Swal.fire({
+            icon: "info",
+            title: "Logged Out",
+            text: "You have been signed out."
+        });
+    }
 })
+
 async function loginWithGoogle() {
-    try {
-        const { data, error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: 'http://127.0.0.1:5500/dashboard.html'
-                // redirectTo: 'https://rafiapanjwani7-afk.github.io/post_app/dashboard.html'
-            }
-        }); if (error) {
-            console.log(error);
+    console.log("Google button clicked");
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+            redirectTo: `${window.location.origin}/dashboard.html`
+            // redirectTo: 'http://127.0.0.1:5500/dashboard.html'    
+            //redirectTo: 'https://rafiapanjwani7-afk.github.io/post_app/dashboard.html'
         }
-    } catch (error) {
-        console.log(error);
+    });
+
+    console.log(data);
+    console.log(error);
+
+    if (error) {
+        Swal.fire("Error", error.message, "error");
     }
 }
 window.signup = signup
