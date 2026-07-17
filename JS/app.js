@@ -142,7 +142,7 @@ function createPostCard(post) {
 </div>
 `;
 }
-
+let userRole;
 // Onload setup
 window.onload = async function () {
     const postsContainer = document.getElementById("posts");
@@ -161,7 +161,7 @@ window.onload = async function () {
             if (!userName) {
                 userName = user.email.split("@")[0];
             }
-
+            userRole = user.user_metadata?.role || "";
             const firstLetter = userName.charAt(0).toUpperCase();
 
             if (document.getElementById("userInitial")) {
@@ -171,14 +171,15 @@ window.onload = async function () {
                 document.getElementById("dropdownEmail").innerText = Email;
             }
         } 
-        if (Email === "admin@gmail.com") {
+        if (userRole === "admin") {
                 const adminBtn = document.getElementById("admin-panel-btn");
                 if (adminBtn) {
                     adminBtn.classList.remove("d-none");
                 }
             }else {
             console.log("No active session found.");
-        }
+        } 
+
         if (error) console.log("Auth Error:", error);
     } catch (error) {
         console.log("User load error:", error);
@@ -306,8 +307,7 @@ async function deleteComment(commentId, commentUserId, postId) {
         Swal.fire("Error", "Please login first", "error");
         return;
     }
-
-    if (userid !== commentUserId) {
+    if (userid !== commentUserId && userRole !== 'admin') {
         Swal.fire("Access Denied", "You can delete only your own comment", "error");
         return;
     }
@@ -385,6 +385,7 @@ async function post() {
         let imageFile = imageInput ? imageInput.files[0] : null;
         let finalBgUrl = "";
 
+
         if (imageFile) {
             let fileExtension = imageFile.name.split('.').pop();
             let fileName = `${Date.now()}_${fileExtension}`;
@@ -443,7 +444,8 @@ async function post() {
                         text_color: colorToSave,
                         email: Email,
                         user_id: userid,
-                        user_name: userName
+                        user_name: userName,
+                        role: userRole
                     });
 
                 if (error) {
@@ -566,7 +568,11 @@ async function editPost(event, id, desc, titleVal, bg_img, textColor, currentTex
         return;
     }
 
-    if (userid !== userId) {
+    // if (userid !== userId) {
+    //     Swal.fire({ icon: "error", title: "Access Denied", text: "You can only edit your own post." });
+    //     return;
+    // }
+    if (userid !== userId && userRole !== 'admin') {
         Swal.fire({ icon: "error", title: "Access Denied", text: "You can only edit your own post." });
         return;
     }
@@ -639,8 +645,7 @@ async function delpost(event, id, UserId) {
         Swal.fire("Error", "Please login first", "error");
         return;
     }
-
-    if (userid !== UserId) {
+    if (userid !== UserId && userRole !== 'admin') {
         Swal.fire({ icon: "error", title: "Access Denied", text: "You can only delete your own post." });
         return;
     }

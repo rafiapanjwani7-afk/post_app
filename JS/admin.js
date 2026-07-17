@@ -1,62 +1,189 @@
-import supabase from "../supabase.js";
 
-const admin_Email = "admin@gmail.com";
+import supabase, { supabaseAdmin } from '../supabase.js';
 
-// DOM Load Event
+
 window.addEventListener("DOMContentLoaded", async () => {
     console.log("Admin page successfully loaded, initializing data...");
-    await checkAdminSecurity(); // Security pehle check hogi
+    await checkAdmin();
 });
-
-// Security Check
-async function checkAdminSecurity() {
+async function checkAdmin() {
     const { data: { user }, error } = await supabase.auth.getUser();
-
     if (error || !user) {
-        window.location.href = "login.html";
+        window.location.href = "adminlogin.html";
         return;
     }
-
-    if (user.email !== admin_Email) {
+    const userRole = user.user_metadata?.role;
+    if (userRole !== 'admin') {
         Swal.fire({
             icon: 'error',
             title: 'Access Denied',
             text: 'You are not authorized to view this page!',
             confirmButtonColor: '#d33'
         }).then(() => {
-            window.location.href = "dashboard.html";
+            window.location.href = "adminlogin.html";
         });
         return;
     }
 
     console.log("Welcome admin!", user.email);
-
-    // Agar login check ok ho, toh sara data load karein
-    await fetchStats();
+    await loadStats();
     await loadAllPost();
     await loadAllComments();
+    await loadAllUsers();
 }
-// async function fetchStats() {
-//     try {
-//         const { count, error } = await supabase
-//             .from('post_app_table')
-//             .select('*', { count: 'exact', head: true });
 
-//         if (error) {
-//             console.log(error);
-//             return;
-//         }
+async function loadAllUsers() {
+    try {
+        // Direct admin API call using supabaseAdmin
+        const { data, error } = await supabaseAdmin.auth.admin.listUsers();
 
-//         // Error Fix: 'totalPosts' ki jagah 'count' variable use kiya jo upar destructure ho raha hai
-//         document.getElementById("stat-posts").innerText = count || 0;
+        if (error) throw error;
 
-//     } catch (error) {
-//         console.log(error);
-//     }
-// }
+        const users = data.users;
+        const tableBody = document.getElementById("users-table-body");
+        if (!tableBody) return;
 
-// 1. Fetch statistics
-async function fetchStats() {
+        if (!users || users.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">No users registered yet.</td></tr>`;
+            return;
+        }
+
+        // Table ko render karein
+        tableBody.innerHTML = "";
+        users.forEach((user, index) => {
+            const joinedDate = new Date(user.created_at).toLocaleDateString();
+
+            // User metadata se names aur role nikalna
+            const fullName = `${user.user_metadata?.first_name || ''} ${user.user_metadata?.last_name || ''}`.trim() || 'Anonymous User';
+            const role = user.user_metadata?.role || 'user';
+
+            tableBody.innerHTML += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><strong>${fullName}</strong></td>
+                    <td>${user.email}</td>
+                    <td><span class="badge ${role === 'admin' ? 'bg-danger' : 'bg-success'}">${role}</span></td>
+                    <td>${joinedDate}</td>
+                    <td>
+        <button class="btn btn-sm btn-danger" onclick="deleteUser('${user.id}')">
+            <i class="bi bi-trash"></i> Delete
+        </button>
+              </td>
+                </tr>
+                
+            `;
+        });
+
+        // Dashboard overview stats card ko dynamic update karein
+        const totalUsersEl = document.getElementById("total-users");
+        if (totalUsersEl) {
+            totalUsersEl.innerText = users.length;
+        }
+
+    } catch (err) {
+        console.error("Error loading users with supabaseAdmin:", err.message);
+    }
+}
+
+window.loadAllUsers = loadAllUsers;
+async function deleteUser(userId) {
+    // 1. SweetAlert2 Confirmation Dialog
+    const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "Kya aap waqai is user ko delete karna chahte hain? Iske saare posts bhi delete ho jayenge!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444', // Red color for delete
+        cancelButtonColor: '#4b5563',  // Gray color for cancel
+        confirmButtonText: 'Yes, delete user!',
+        cancelButtonText: 'Cancel',
+        background: '#1e293b',         // Admin panel dark theme match karne ke liye
+        color: '#fff'
+    });
+
+    // Agar user ne cancel kiya toh function se exit kar jayein
+    if (!result.isConfirmed) {
+        return;
+    }
+
+    // Loader show karein jab tak delete operation chal raha ho
+    Swal.fire({
+        title: 'Deleting user...',
+        html: 'Please wait while we remove the user data.',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+        background: '#1e293b',
+        color: '#fff'
+    });
+
+    try {
+        // First, delete all posts by this user
+        const { error: postsError } = await supabase
+            .from("My Posts")
+            .delete()
+            .eq("user_id", userId);
+
+        if (postsError) {
+            console.error("Error deleting user posts:", postsError);
+        }
+
+        // Delete the user using admin client
+        const { data, error } = await supabaseAdmin.auth.admin.deleteUser(userId);
+
+        if (error) {
+            console.error("Auth error:", error);
+
+            let errorMessage = error.message;
+            if (error.message.includes("service_role")) {
+                errorMessage = "Admin permissions error. Please check your service role key.";
+            }
+
+            // Error SweetAlert
+            Swal.fire({
+                icon: 'error',
+                title: 'Delete Failed',
+                text: errorMessage,
+                background: '#1e293b',
+                color: '#fff'
+            });
+            return;
+        }
+
+        console.log("User deleted successfully:", data);
+
+        // Success SweetAlert
+        await Swal.fire({
+            icon: 'success',
+            title: 'Deleted Successfully!',
+            text: 'User aur unka saara data system se remove kar diya gaya hai.',
+            timer: 2000,
+            showConfirmButton: false,
+            background: '#1e293b',
+            color: '#fff'
+        });
+
+        // Refresh the users list and stats
+        await loadAllUsers();
+        await loadStats();
+
+    } catch (error) {
+        console.error("Unexpected error:", error);
+
+        // Unexpected Error SweetAlert
+        Swal.fire({
+            icon: 'error',
+            title: 'Unexpected Error',
+            text: 'An unexpected error occurred while deleting the user.',
+            background: '#1e293b',
+            color: '#fff'
+        });
+    }
+}
+window.deleteUser = deleteUser
+
+async function loadStats() {
     try {
         const { count: postsCount, error: postErr } = await supabase
             .from('post_app_table')
@@ -78,7 +205,7 @@ async function fetchStats() {
         const totalCommentsEl = document.getElementById("total-comments");
         const totalLikesEl = document.getElementById("total-likes");
         if (totalPostsEl) {
-            totalPostsEl.innerText = postsCount || 0; 
+            totalPostsEl.innerText = postsCount || 0;
         }
         if (totalCommentsEl) totalCommentsEl.innerText = commentsCount || 0;
         if (totalLikesEl) totalLikesEl.innerText = likesCount || 0;
@@ -87,25 +214,6 @@ async function fetchStats() {
         console.error("Error in fetchStats:", err);
     }
 }
-// async function loadAllPost() {
-//     try {
-//         const { data, error } = await supabase
-//             .from("post_app_table")
-//             .select("*")
-//             .order("id", { ascending: false });
-
-//         if (error) {
-//             console.log("Error:", error);
-//             return;
-//         }
-
-//         console.log("All Posts:", data);
-
-
-//     } catch (error) {
-//         console.log(error);
-//     }
-// }
 // 2. Load Posts Table
 async function loadAllPost() {
     try {
@@ -137,11 +245,19 @@ async function loadAllPost() {
                     <td>${post.title || 'No Title'}</td>
                     <td class="text-truncate" style="max-width: 250px;">${post.description || ''}</td>
                     <td>
-                        <button class="btn btn-sm btn-danger" onclick="deletePost('${post.id}')">
-                            <i class="bi bi-trash"></i> Delete
-                        </button>
-                       
+                        <div class="d-flex flex-column gap-2" style="max-width: 100px;">
+        <button class="btn btn-sm btn-outline-info px-3 w-100" 
+                onclick="openEditMode('${post.id}', '${post.title}', '${post.description}')"
+                style="border-radius: 6px; font-weight: 500; transition: all 0.2s ease;">
+            <i class="bi bi-pencil-square me-1"></i> Edit
+        </button>
 
+        <button class="btn btn-sm btn-outline-danger px-3 w-100" 
+                onclick="deletePost('${post.id}')"
+                style="border-radius: 6px; font-weight: 500; transition: all 0.2s ease;">
+            <i class="bi bi-trash3 me-1"></i> Delete
+        </button>
+    </div>
                     </td>
                 </tr>
             `;
@@ -150,7 +266,7 @@ async function loadAllPost() {
         console.error("Error loading posts:", err);
     }
 }
- //<button type="button" class="btn btn-info text-white" onclick="updatePostData()">edited</button>
+
 // 3. Load Comments Table
 async function loadAllComments() {
     try {
@@ -179,10 +295,11 @@ async function loadAllComments() {
                     <td>${comment.comment_text || comment.text || 'No comment text'}</td>
                     <td>Post #${comment.post_id || ''}</td>
                     <td>
-                        <button class="btn btn-sm btn-danger" onclick="deleteComment('${comment.id}')">
+                        <button class="btn btn-sm btn-outline-danger px-3"
+                         onclick="deleteComment('${comment.id}')">
                             <i class="bi bi-trash"></i> Delete
                         </button>
-                       
+                       <button type="button" class="btn btn-sm btn-outline-info edit-post-btn px-3 me-1" onclick="updatecommentData()"><i class="bi bi-pencil-square me-1"></i> Edit</button> 
                     </td>
                 </tr>
             `;
@@ -191,7 +308,6 @@ async function loadAllComments() {
         console.error("Error loading comments:", err);
     }
 }
- // <button type="button" class="btn btn-info  text-white" onclick="updatecommentData()">edited</button>
 function openEditMode(id, title, description) {
     document.getElementById('edit-post-id').value = id;
     document.getElementById('edit-post-title').value = title;
@@ -201,7 +317,7 @@ function openEditMode(id, title, description) {
     const editModal = new bootstrap.Modal(document.getElementById('editPostModal'));
     editModal.show();
 }
-async function updatePostData(){
+async function updatePostData() {
     const postId = document.getElementById('edit-post-id').value;
     const updatedTitle = document.getElementById('edit-post-title').value;
     const updatedDesc = document.getElementById('edit-post-desc').value;
@@ -220,9 +336,9 @@ async function updatePostData(){
     try {
         const { error } = await supabase
             .from('post_app_table')
-            .update({ 
-                title: updatedTitle, 
-                description: updatedDesc 
+            .update({
+                title: updatedTitle,
+                description: updatedDesc
             })
             .eq('id', postId);
 
@@ -261,7 +377,6 @@ async function updatePostData(){
         console.error("Update error:", err);
     }
 }
-// 4. Delete Post
 async function deletePost(postId) {
     const result = await Swal.fire({
         title: 'Are you sure?',
@@ -300,7 +415,7 @@ async function deletePost(postId) {
             });
 
             await loadAllPost();
-            await fetchStats();
+            await loadStats();
 
         } catch (err) {
             Swal.fire({
@@ -369,35 +484,116 @@ async function deleteComment(commentId) {
 
 // 🚀 clean and safe global tab-switching logic
 function showSection(sectionId) {
-    // 1. Sabhi sections dhoondein aur unpar 'd-none' class laga dein (hidden)
-    const sections = document.querySelectorAll('.admin-section');
-    sections.forEach(sec => {
-        sec.classList.add('d-none');
+    // Sabhi sections ko hide kar dein
+    document.querySelectorAll('.admin-section').forEach(section => {
+        section.classList.add('d-none');
+        section.classList.remove('active-section');
     });
 
-    // 2. Sirf select kiye gaye section se 'd-none' remove karein (visible)
-    const targetSection = document.getElementById('section-' + sectionId);
+    // Target section ko show karein
+    const targetSection = document.getElementById(`section-${sectionId}`);
     if (targetSection) {
         targetSection.classList.remove('d-none');
+        targetSection.classList.add('active-section');
     }
 
-    // 3. Sidebar links ki active styling update karein
-    const links = document.querySelectorAll('.sidebar .nav-link');
-    links.forEach(link => link.classList.remove('active'));
+    // Nav links par active class toggle karein
+    document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
 
-    // Sidebar buttons ki simple IDs match karne ke liye
-    const activeLink = document.getElementById('tab-' + sectionId);
+    const activeLink = document.getElementById(`tab-${sectionId}`);
     if (activeLink) {
         activeLink.classList.add('active');
     }
 }
+// Security Check (Role-based instead of Email-based)
+
+async function logoutAdmin() {
+    const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You will be logged out of the admin panel!",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#e11d48', // Red color for logout
+        cancelButtonColor: '#4b5563',  // Gray for cancel
+        confirmButtonText: 'Yes, Log out',
+        background: '#15222e',
+        color: '#f3f4f6'
+    });
+
+    if (result.isConfirmed) {
+        try {
+            const { error } = await supabase.auth.signOut();
+            if (error) throw error;
+
+            Swal.fire({
+                title: 'Logged Out!',
+                text: 'Redirecting to login page...',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false,
+                background: '#15222e',
+                color: '#f3f4f6'
+            });
+
+            // 1.5 seconds ke baad login page par bhej dein
+            setTimeout(() => {
+                window.location.href = "adminlogin.html"; // 👈 Apne login page ka sahi name check kar lein
+            }, 1500);
+
+        } catch (err) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: err.message,
+                background: '#15222e',
+                color: '#f3f4f6'
+            });
+        }
+    }
+}
+// ================= MOBILE SIDEBAR TOGGLE LOGIC =================
+document.addEventListener("DOMContentLoaded", () => {
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    const sidebar = document.querySelector(".sidebar");
+    const sidebarOverlay = document.getElementById("sidebarOverlay");
+    const navLinks = document.querySelectorAll(".sidebar .nav-link");
+
+    function toggleSidebar() {
+        sidebar.classList.toggle("show");
+        sidebarOverlay.classList.toggle("show");
+    }
+
+    // Hamburger button click event
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener("click", toggleSidebar);
+    }
+
+    // Overlay par click karne se sidebar close ho jaye
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener("click", toggleSidebar);
+    }
+
+    // Mobile par jab kisi tab/link par click ho toh sidebar automatic close ho jaye
+    navLinks.forEach(link => {
+        link.addEventListener("click", () => {
+            if (window.innerWidth < 992) {
+                sidebar.classList.remove("show");
+                sidebarOverlay.classList.remove("show");
+            }
+        });
+    });
+});
+
+window.logoutAdmin = logoutAdmin;
 
 // Globals set karein taaki HTML inline onclick seamlessly kaam karein
 window.showSection = showSection;
 window.deletePost = deletePost;
 window.deleteComment = deleteComment;
-window.fetchStats = fetchStats;
+window.loadStats = loadStats;
 window.loadAllPost = loadAllPost;
 window.loadAllComments = loadAllComments;
-window.updatePostData=updatePostData
-window.openEditMode=openEditMode
+window.updatePostData = updatePostData
+window.openEditMode = openEditMode

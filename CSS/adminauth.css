@@ -1,0 +1,287 @@
+/* Base styles */
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0f172a; /* Slate 900 background */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+}
+
+        /* 🌟 Elegant Login Card Container */
+        .login-card {
+            background-color: #1e293b; /* Slate 800 background */
+            width: 100%;
+            max-width: 420px;
+            padding: 2.2rem 2rem;
+            border-radius: 16px; /* Elegant rounded corners */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        /* Shield/Lock Icon Header */
+        .card-header-icon {
+            font-size: 42px;
+            color: #14b8a6; /* Main Teal Accent */
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        /* Admin Portal Title */
+        .login-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.5px;
+        }
+
+        .login-subtitle {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 1.8rem;
+        }
+
+        /* Input Fields and Labels */
+        .form-group {
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13.5px;
+            color: #38bdf8; /* Clear Sky-blue labels */
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        /* Beautiful Modern Inputs */
+        .form-control {
+            width: 100%;
+            padding: 11px 14px;
+            font-size: 14.5px;
+            background-color: #0f172a !important; /* Slate 900 dark bg */
+            border: 1.5px solid #334155 !important;
+            color: #ffffff !important;
+            border-radius: 10px !important; /* Perfect matching curves */
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* On Input Focus */
+        .form-control:focus {
+            outline: none;
+            border-color: #14b8a6 !important;
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15) !important;
+        }
+
+        /* Visible Placeholder Text */
+        .form-control::placeholder {
+            color: #94a3b8 !important;
+            opacity: 0.85 !important;
+        }
+
+        /* Buttons Styling (Teal Matching Layout) */
+        .login-btn, .google-btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        /* Login Button Primary Style */
+        .login-btn {
+            background-color: #14b8a6; /* Pure Teal */
+            color: #ffffff;
+            margin-top: 0.5rem;
+        }
+        .login-btn:hover {
+            background-color: #0d9488; /* Darker teal on hover */
+            transform: translateY(-1px);
+            color: #ffffff !important;
+        }
+
+        /* Google Login Button matching Layout */
+        .google-btn {
+            background-color: #14b8a6 !important;
+            color: #ffffff !important;
+            margin-top: 0.8rem;
+        }
+        .google-btn:hover {
+            background-color: #0d9488 !important;
+            transform: translateY(-1px);
+        }
+
+        /* Divider & Register Link */
+        .or-divider {
+            color: #64748b;
+            font-size: 13px;
+            margin: 1.2rem 0;
+        }
+
+        .register-link {
+            color: #38bdf8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 1rem;
+            transition: color 0.2s;
+        }
+        .register-link:hover {
+            color: #0ea5e9;
+            text-decoration: underline;
+        }
+/* Card Container */
+.signup-card {
+    background-color: #1e293b; /* Slate 800 background */
+    width: 100%;
+    max-width: 430px;
+    padding: 2rem 1.8rem;
+    border-radius: 16px; /* Elegant border radius */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+}
+
+/* Card Icon & Header */
+.card-header-icon {
+    font-size: 40px;
+    color: #14b8a6; /* Main Teal Color */
+    margin-bottom: 0.5rem;
+}
+
+.signup-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.5px;
+}
+
+/* Labels and Form Groups */
+.form-group {
+    margin-bottom: 1.2rem;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13.5px;
+    color: #38bdf8; /* Sky-blue text for clearer labels */
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+/* Inputs with beautiful border-radius and visible placeholder colors */
+.form-control {
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 14.5px;
+    background-color: #0f172a !important; /* Rich Dark Input Bg */
+    border: 1.5px solid #334155 !important; /* Subtle gray-blue border */
+    color: #ffffff !important;
+    border-radius: 10px !important; /* Rounded borders for elegant modern look */
+    box-sizing: border-box;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Jab input par click/focus ho */
+.form-control:focus {
+    outline: none;
+    border-color: #14b8a6 !important;
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15) !important;
+}
+
+/* 🌟 Placeholder color correction (Iss se placeholder ka text bilkul saaf aur bright nazar aayega!) */
+.form-control::placeholder {
+    color: #94a3b8 !important; /* Bright Slate Gray color */
+    opacity: 0.85 !important;
+}
+
+/* Webkit specific for Chrome/Edge */
+.form-control:-ms-input-placeholder {
+    color: #94a3b8 !important;
+}
+.form-control::-ms-input-placeholder {
+    color: #94a3b8 !important;
+}
+
+/* Buttons (Same Teal Color for both Signup & Google) */
+.signup-btn, .google-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 10px; /* Matching border-radius */
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+/* Signup Button Primary Style */
+.signup-btn {
+    background-color: #14b8a6; /* Teal */
+    color: #ffffff;
+}
+.signup-btn:hover {
+    background-color: #0d9488; /* Darker Teal on hover */
+    transform: translateY(-1px);
+    color: #ffffff !important;
+}
+
+/* 🌟 Google Button (Same Color Scheme as Signup Button) */
+.google-btn {
+    background-color: transparent;
+    border: 1.5px solid #14b8a6; /* Teal Border */
+    color: #14b8a6; /* Teal Text */
+    margin-top: 0.8rem;
+}
+.google-btn:hover {
+    background-color: rgba(20, 184, 166, 0.1); /* Light Teal background on hover */
+    transform: translateY(-1px);
+}
+
+/* Divider & Links */
+.or-divider {
+    color: #64748b;
+    font-size: 13px;
+    margin: 1rem 0;
+    position: relative;
+}
+
+.return-link {
+    color: #38bdf8;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-block;
+    margin-top: 1rem;
+    transition: color 0.2s;
+}
+.return-link:hover {
+    color: #0ea5e9;
+    text-decoration: underline;
+}
+.google-btn {
+    background-color: transparent;
+    border: 1.5px solid #14b8a6; /* Teal Border */
+    color: #14b8a6; /* Teal Text */
+    margin-top: 0.8rem;
+}

@@ -189,3 +189,92 @@ body {
 .admin-section {
     transition: opacity 0.3s ease-in-out;
 }
+/* ================= MOBILE RESPONSIVENESS ================= */
+
+/* Tables ko responsive scroll dene ke liye */
+.table-responsive {
+    width: 100%;
+    margin-bottom: 1rem;
+    overflow-y: hidden;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+}
+
+/* Mobile Screens (992px se choti screens) */
+@media (max-width: 991.98px) {
+    /* Sidebar ko default hide aur slide-in transition dena */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -260px; /* Hidden by default */
+        height: 100vh;
+        width: 260px;
+        z-index: 1050;
+        transition: left 0.3s ease-in-out;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+    }
+
+    /* Sidebar jab active/open ho */
+    .sidebar.show {
+        left: 0;
+    }
+
+    /* Main content margin reset */
+    .main-content {
+        margin-left: 0 !important;
+        padding-top: 60px !important; /* Top bar ke liye space */
+    }
+
+    /* Mobile Header/Navbar toggler ke liye */
+    .mobile-header {
+        display: flex !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background-color: #0f172a;
+        border-bottom: 1px solid #1e293b;
+        z-index: 1040;
+        align-items: center;
+        padding: 0 15px;
+    }
+
+    /* Sidebar overlay jab mobile par menu khule */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1045;
+    }
+    
+    .sidebar-overlay.show {
+        display: block;
+    }
+}
+
+/* Desktop layout ke liye mobile header hide rahega */
+@media (min-width: 992px) {
+    .mobile-header {
+        display: none !important;
+    }
+    .sidebar-overlay {
+        display: none !important;
+    }
+}
+/* Buttons wrap handle karne ke liye table updates */
+.table td .d-flex {
+    flex-wrap: nowrap; /* Taki buttons upar neeche na hon */
+}
+
+@media (max-width: 576px) {
+    .table td .d-flex {
+        flex-direction: column; /* Mobile screen par buttons stack ho jayenge aur easy access denge */
+        gap: 5px !important;
+    }
+}
