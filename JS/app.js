@@ -601,7 +601,7 @@ async function logout() {
         timer: 1200,
         showConfirmButton: false
     }).then(() => {
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
     });
 }
 

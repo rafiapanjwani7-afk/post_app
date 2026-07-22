@@ -1,5 +1,22 @@
 import supabase from "../supabase.js";
 
+document.addEventListener('DOMContentLoaded', () => {
+    const subtitle = document.getElementById('headerSubtitle');
+    const signupTab = document.getElementById('signup-tab');
+    const loginTab = document.getElementById('login-tab');
+
+    if (signupTab && loginTab && subtitle) {
+        // Sign Up Tab Click
+        signupTab.addEventListener('click', () => {
+            subtitle.textContent = "Create your account to get started!";
+        });
+
+        // Login Tab Click
+        loginTab.addEventListener('click', () => {
+            subtitle.textContent = "Welcome back! Please login to your account.";
+        });
+    }
+});
 // ================= SIGNUP =================
 
 const signupForm = document.getElementById('signupForm')
@@ -158,7 +175,8 @@ async function loginWithGoogle() {
         options: {
             redirectTo: `${window.location.origin}/dashboard.html`
             // redirectTo: 'http://127.0.0.1:5500/dashboard.html'    
-            //redirectTo: 'https://rafiapanjwani7-afk.github.io/post_app/dashboard.html'
+            // redirectTo: 'https://postifly-app.netlify.app/dashboard.html'    
+            //redirectTo: 'https://rafiapanjwani7-afk.github.io/post_app/dashboard.html' 
         }
     });
 

@@ -24,26 +24,23 @@
         <form id="adminLoginForm">
             <div class="form-group">
                 <label for="adminEmail">Admin Email</label>
-                <input type="email" id="adminEmail" class="form-control" placeholder="admin@gmail.com" required>
+                <div class="input-wrapper">
+            <i class="bi bi-envelope input-icon"></i>
+            <input type="email" id="email" class="form-control" placeholder="admin@gmail.com" required>
+        </div>
             </div>
 
             <div class="form-group">
                 <label for="adminPassword">Password</label>
-                <input type="password" id="adminPassword" class="form-control" placeholder="••••••" required>
+                <div class="input-wrapper">
+            <i class="bi bi-lock input-icon"></i>
+            <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+        </div>
             </div>
 
             <button type="submit" class="login-btn">
                 <i class="bi bi-box-arrow-in-right"></i> Access Dashboard
             </button>
-
-            <div class="or-divider">or</div>
-
-            <!-- <button type="button"
-                class="btn login-btn w-100 d-flex align-items-center justify-content-center gap-2 btn-auth"
-                id="googleLoginBtn" onclick="loginWithGoogle()">
-                <img src="images/google.png" alt="google icon" class="gimg" style="width: 18px; height: 18px;">
-                Continue with Google
-            </button> -->
         </form>
 
         <a href="adminsign.html" class="register-link">Register New Admin</a>
